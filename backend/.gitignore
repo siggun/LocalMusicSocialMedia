@@ -1,0 +1,11 @@
+build/
+.gradle/
+*.class
+*.jar
+*.war
+.idea/
+*.iml
+.DS_Store
+*.log
+firebase-service-account.json
+.env
