@@ -3,10 +3,12 @@ package com.bandswipe.discovery.service;
 import com.bandswipe.discovery.dto.DiscoveryProfileResponse;
 import com.bandswipe.profile.entity.MusicianProfile;
 import com.bandswipe.profile.repository.ProfileRepository;
+import com.bandswipe.shared.enums.Availability;
 import com.bandswipe.shared.enums.SkillLevel;
 import com.bandswipe.shared.exception.ResourceNotFoundException;
 import com.bandswipe.swipe.repository.SwipeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,18 @@ public class DiscoveryService {
 
     private final ProfileRepository profileRepository;
     private final SwipeRepository swipeRepository;
+
+    @Value("${app.discovery.weight.genre-overlap:40}")
+    private int genreOverlapWeight;
+
+    @Value("${app.discovery.weight.instrument-complement:30}")
+    private int instrumentComplementWeight;
+
+    @Value("${app.discovery.weight.skill-proximity:20}")
+    private int skillProximityWeight;
+
+    @Value("${app.discovery.weight.distance-bonus:10}")
+    private int distanceBonusWeight;
 
     @Transactional(readOnly = true)
     public Page<DiscoveryProfileResponse> getFeed(UUID userId,
@@ -108,8 +122,10 @@ public class DiscoveryService {
                                                double distanceMiles,
                                                int maxDistance) {
         double score = 0.0;
+        double maxPossibleScore = genreOverlapWeight + instrumentComplementWeight
+                + skillProximityWeight + distanceBonusWeight + 5.0;
 
-        // Genre overlap: (shared / total unique) * 40
+        // Genre overlap: (shared / total unique) * genreOverlapWeight
         Set<Integer> currentGenreIds = new HashSet<>();
         current.getGenres().forEach(g -> currentGenreIds.add(g.getId()));
         Set<Integer> candidateGenreIds = new HashSet<>();
@@ -121,10 +137,10 @@ public class DiscoveryService {
         if (!allGenres.isEmpty()) {
             Set<Integer> sharedGenres = new HashSet<>(currentGenreIds);
             sharedGenres.retainAll(candidateGenreIds);
-            score += ((double) sharedGenres.size() / allGenres.size()) * 40.0;
+            score += ((double) sharedGenres.size() / allGenres.size()) * genreOverlapWeight;
         }
 
-        // Instrument complementarity: (different / total) * 30
+        // Instrument complementarity: (different / total) * instrumentComplementWeight
         Set<Integer> currentInstrumentIds = new HashSet<>();
         current.getInstruments().forEach(i -> currentInstrumentIds.add(i.getId()));
         Set<Integer> candidateInstrumentIds = new HashSet<>();
@@ -137,22 +153,39 @@ public class DiscoveryService {
             Set<Integer> sharedInstruments = new HashSet<>(currentInstrumentIds);
             sharedInstruments.retainAll(candidateInstrumentIds);
             int differentInstruments = allInstruments.size() - sharedInstruments.size();
-            score += ((double) differentInstruments / allInstruments.size()) * 30.0;
+            score += ((double) differentInstruments / allInstruments.size()) * instrumentComplementWeight;
         }
 
-        // Skill level proximity: (3 - |ordinal diff|) / 3 * 20
+        // Skill level proximity: (3 - |ordinal diff|) / 3 * skillProximityWeight
         if (current.getSkillLevel() != null && candidate.getSkillLevel() != null) {
             int ordinalDiff = Math.abs(current.getSkillLevel().ordinal() - candidate.getSkillLevel().ordinal());
-            score += ((3.0 - ordinalDiff) / 3.0) * 20.0;
+            score += ((3.0 - ordinalDiff) / 3.0) * skillProximityWeight;
         }
 
-        // Distance bonus: (1 - distance/maxDistance) * 10
+        // Distance bonus: (1 - distance/maxDistance) * distanceBonusWeight
         if (maxDistance > 0) {
             double distanceRatio = Math.min(distanceMiles / maxDistance, 1.0);
-            score += (1.0 - distanceRatio) * 10.0;
+            score += (1.0 - distanceRatio) * distanceBonusWeight;
         }
 
-        return Math.round(score * 100.0) / 100.0;
+        // Availability overlap: if any shared availability values, add 5 * (sharedCount / totalUniqueCount)
+        if (current.getAvailability() != null && candidate.getAvailability() != null) {
+            Set<Availability> currentAvailability = new HashSet<>(current.getAvailability());
+            Set<Availability> candidateAvailability = new HashSet<>(candidate.getAvailability());
+
+            Set<Availability> allAvailability = new HashSet<>(currentAvailability);
+            allAvailability.addAll(candidateAvailability);
+
+            if (!allAvailability.isEmpty()) {
+                Set<Availability> sharedAvailability = new HashSet<>(currentAvailability);
+                sharedAvailability.retainAll(candidateAvailability);
+                score += 5.0 * ((double) sharedAvailability.size() / allAvailability.size());
+            }
+        }
+
+        // Normalize to 0-100 range
+        double normalizedScore = (score / maxPossibleScore) * 100.0;
+        return Math.round(normalizedScore * 100.0) / 100.0;
     }
 
     private double haversineDistance(double lat1, double lon1, double lat2, double lon2) {

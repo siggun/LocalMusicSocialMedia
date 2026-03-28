@@ -40,6 +40,13 @@ app:
   firebase:
     credentials-path: ${FIREBASE_CREDENTIALS_PATH:}
 
+  discovery:
+    weight:
+      genre-overlap: 40
+      instrument-complement: 30
+      skill-proximity: 20
+      distance-bonus: 10
+
 springdoc:
   api-docs:
     path: /api-docs

@@ -6,14 +6,17 @@ import com.bandswipe.match.entity.Match;
 import com.bandswipe.match.repository.MatchRepository;
 import com.bandswipe.profile.entity.MusicianProfile;
 import com.bandswipe.profile.repository.ProfileRepository;
+import com.bandswipe.notification.service.NotificationService;
 import com.bandswipe.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MatchService {
@@ -21,6 +24,7 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public Match createMatch(UUID userId1, UUID userId2) {
@@ -40,7 +44,11 @@ public class MatchService {
 
         match = matchRepository.save(match);
 
-        // TODO: send push notification via Firebase
+        try {
+            notificationService.notifyMatch(userId1, userId2, match.getId());
+        } catch (Exception e) {
+            log.error("Failed to send match notification for match {}: {}", match.getId(), e.getMessage(), e);
+        }
 
         return match;
     }
