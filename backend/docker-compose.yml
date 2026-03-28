@@ -1,21 +1,21 @@
 services:
   postgres:
     image: postgis/postgis:16-3.4
-    container_name: bandswipe-db
+    container_name: lyra-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: bandswipe
-      POSTGRES_USER: bandswipe
-      POSTGRES_PASSWORD: bandswipe
+      POSTGRES_DB: lyra
+      POSTGRES_USER: lyra
+      POSTGRES_PASSWORD: lyra
     ports:
       - "5432:5432"
     volumes:
-      - bandswipe-pgdata:/var/lib/postgresql/data
+      - lyra-pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bandswipe -d bandswipe"]
+      test: ["CMD-SHELL", "pg_isready -U lyra -d lyra"]
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
-  bandswipe-pgdata:
+  lyra-pgdata:

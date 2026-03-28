@@ -15,7 +15,7 @@ export default function WelcomeScreen() {
         <View style={styles.iconWrapper}>
           <Ionicons name="musical-notes" size={64} color={theme.colors.primary} />
         </View>
-        <Text style={styles.title}>BandSwipe</Text>
+        <Text style={styles.title}>Lyra</Text>
         <Text style={styles.tagline}>Find your sound. Find your band.</Text>
       </View>
 

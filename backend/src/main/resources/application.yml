@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bandswipe}
-    username: ${DB_USERNAME:bandswipe}
-    password: ${DB_PASSWORD:bandswipe}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:lyra}
+    username: ${DB_USERNAME:lyra}
+    password: ${DB_PASSWORD:lyra}
     driver-class-name: org.postgresql.Driver
 
   jpa:

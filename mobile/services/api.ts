@@ -12,6 +12,11 @@ import type {
   NotificationItem,
   ApiResponse,
   Page,
+  BandResponse,
+  CreateBandRequest,
+  JamEventResponse,
+  CreateJamRequest,
+  RsvpStatus,
 } from '../types';
 
 let getToken: () => string | null = () => null;
@@ -221,6 +226,63 @@ export async function getUnreadCount(): Promise<{ count: number }> {
 
 export async function markAllRead(): Promise<void> {
   await api.put('/notifications/read-all');
+}
+
+// Bands
+export async function getBands(): Promise<BandResponse[]> {
+  return unwrap(await api.get<ApiResponse<BandResponse[]>>('/bands'));
+}
+
+export async function getBand(bandId: string): Promise<BandResponse> {
+  return unwrap(await api.get<ApiResponse<BandResponse>>(`/bands/${bandId}`));
+}
+
+export async function createBand(data: CreateBandRequest): Promise<BandResponse> {
+  return unwrap(await api.post<ApiResponse<BandResponse>>('/bands', data));
+}
+
+export async function addBandMember(
+  bandId: string,
+  userId: string,
+  role?: string,
+): Promise<BandResponse> {
+  return unwrap(
+    await api.post<ApiResponse<BandResponse>>(`/bands/${bandId}/members`, {
+      userId,
+      role,
+    }),
+  );
+}
+
+export async function removeBandMember(
+  bandId: string,
+  userId: string,
+): Promise<void> {
+  await api.delete(`/bands/${bandId}/members/${userId}`);
+}
+
+// Jam Sessions
+export async function getJams(): Promise<JamEventResponse[]> {
+  return unwrap(await api.get<ApiResponse<JamEventResponse[]>>('/jams'));
+}
+
+export async function getJam(jamId: string): Promise<JamEventResponse> {
+  return unwrap(await api.get<ApiResponse<JamEventResponse>>(`/jams/${jamId}`));
+}
+
+export async function createJam(data: CreateJamRequest): Promise<JamEventResponse> {
+  return unwrap(await api.post<ApiResponse<JamEventResponse>>('/jams', data));
+}
+
+export async function rsvpJam(
+  jamId: string,
+  status: RsvpStatus,
+): Promise<JamEventResponse> {
+  return unwrap(
+    await api.post<ApiResponse<JamEventResponse>>(`/jams/${jamId}/rsvp`, {
+      status,
+    }),
+  );
 }
 
 export default api;

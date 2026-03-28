@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "BandSwipe",
-    "slug": "bandswipe",
+    "name": "Lyra",
+    "slug": "lyra",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,16 +9,16 @@
     "splash": {
       "backgroundColor": "#1a1a2e"
     },
-    "scheme": "bandswipe",
+    "scheme": "lyra",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.bandswipe.app"
+      "bundleIdentifier": "com.lyramusic.app"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#1a1a2e"
       },
-      "package": "com.bandswipe.app"
+      "package": "com.lyramusic.app"
     },
     "plugins": [
       "expo-router"

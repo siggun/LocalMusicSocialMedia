@@ -41,7 +41,7 @@ export default function SignupScreen() {
         style={styles.inner}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <Text style={styles.title}>Join BandSwipe</Text>
+        <Text style={styles.title}>Join Lyra</Text>
         <Text style={styles.subtitle}>Create your account to start swiping</Text>
 
         <View style={styles.form}>

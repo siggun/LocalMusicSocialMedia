@@ -3,9 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as api from '../services/api';
 import { setAuthInterceptors } from '../services/api';
 
-const TOKEN_KEY = 'bandswipe_token';
-const USER_ID_KEY = 'bandswipe_user_id';
-const EMAIL_KEY = 'bandswipe_email';
+const TOKEN_KEY = 'lyra_token';
+const USER_ID_KEY = 'lyra_user_id';
+const EMAIL_KEY = 'lyra_email';
 
 interface AuthState {
   token: string | null;
