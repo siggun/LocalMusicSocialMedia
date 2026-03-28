@@ -1,0 +1,103 @@
+export interface User {
+  id: string;
+  email: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  userId: string;
+  email: string;
+}
+
+export interface InstrumentDto {
+  id: number;
+  name: string;
+  icon: string;
+}
+
+export interface GenreDto {
+  id: number;
+  name: string;
+  icon: string;
+}
+
+export interface MusicianProfile {
+  id: string;
+  userId: string;
+  displayName: string;
+  bio: string;
+  skillLevel: string;
+  availability: string[];
+  photoUrl: string | null;
+  audioIntroUrl: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  maxDistanceMiles: number | null;
+  instruments: InstrumentDto[];
+  genres: GenreDto[];
+  soundcloudUrl: string | null;
+  spotifyUrl: string | null;
+  youtubeUrl: string | null;
+  bandcampUrl: string | null;
+  createdAt: string;
+}
+
+export interface DiscoveryProfile extends MusicianProfile {
+  distanceMiles: number;
+  compatibilityScore: number;
+}
+
+export interface MatchResponse {
+  matchId: string;
+  matchedUser: MusicianProfile;
+  matchedAt: string;
+}
+
+export interface SwipeRequest {
+  targetUserId: string;
+  direction: 'LEFT' | 'RIGHT';
+}
+
+export interface SwipeResponse {
+  matched: boolean;
+  matchId: string | null;
+}
+
+export interface CreateProfileRequest {
+  displayName: string;
+  bio: string;
+  skillLevel: string;
+  availability: string[];
+  instrumentIds: number[];
+  genreIds: number[];
+  latitude?: number;
+  longitude?: number;
+  maxDistanceMiles?: number;
+  soundcloudUrl?: string;
+  spotifyUrl?: string;
+  youtubeUrl?: string;
+  bandcampUrl?: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string | null;
+  data: T;
+}
+
+export interface NotificationItem {
+  id: string;
+  type: string;
+  title: string;
+  body: string;
+  dataJson: string | null;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export interface Page<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+}

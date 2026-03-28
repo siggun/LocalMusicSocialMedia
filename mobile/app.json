@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "BandSwipe",
+    "slug": "bandswipe",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#1a1a2e"
+    },
+    "scheme": "bandswipe",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.bandswipe.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1a1a2e"
+      },
+      "package": "com.bandswipe.app"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
